@@ -1,77 +1,49 @@
 <?php
 session_start();
+require_once 'db.php'; // inclure PDO
 
-define('USERS_FILE', __DIR__ . '/../data/users.json');
-
-// Charge les utilisateurs depuis le fichier JSON
-function load_users() {
-    if (!file_exists(USERS_FILE)) return [];
-    $json = file_get_contents(USERS_FILE);
-    $users = json_decode($json, true);
-    return is_array($users) ? $users : [];
-}
-
-// Sauvegarde les utilisateurs dans le fichier JSON
-function save_users($users) {
-    $fp = fopen(USERS_FILE, 'c+');
-    if (!$fp) throw new Exception("Impossible d'ouvrir le fichier users.json");
-    if (flock($fp, LOCK_EX)) {
-        ftruncate($fp, 0);
-        rewind($fp);
-        fwrite($fp, json_encode($users, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-        fflush($fp);
-        flock($fp, LOCK_UN);
-    }
-    fclose($fp);
-}
-
-// Cherche un utilisateur par email
 function find_user_by_email($email) {
-    $users = load_users();
-    foreach ($users as $user) {
-        if (strcasecmp($user['email'], $email) === 0) return $user;
-    }
-    return null;
+    global $pdo;
+    $stmt = $pdo->prepare("SELECT * FROM utilisateurs WHERE email = ?");
+    $stmt->execute([$email]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
-// Crée un nouvel utilisateur
 function create_user($email, $password, $role, $firstname = '', $lastname = '') {
+    global $pdo;
+    
     if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) return "Email invalide.";
-    if (strlen($password) < 6) return "Le mot de passe doit contenir au moins 6 caractères.";
+    if (strlen($password) < 6) return "Mot de passe trop court.";
     if (find_user_by_email($email)) return "Un compte avec cet email existe déjà.";
 
-    $users = load_users();
-    $users[] = [
-        'id' => uniqid('u', true),
-        'email' => $email,
-        'password' => password_hash($password, PASSWORD_DEFAULT),
-        'role' => $role,
-        'firstname' => $firstname,
-        'lastname' => $lastname,
-        'active' => true
-    ];
-    save_users($users);
+    $hash = password_hash($password, PASSWORD_DEFAULT);
+    $stmt = $pdo->prepare("INSERT INTO utilisateurs (email, mot_de_passe, role, prenom, nom, actif) VALUES (?, ?, ?, ?, ?, 1)");
+    $stmt->execute([$email, $hash, $role, $firstname, $lastname]);
     return true;
 }
 
-// Connexion utilisateur
+function load_users() {
+    global $pdo;
+    $stmt = $pdo->query("SELECT * FROM utilisateurs");
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
 function login_user($email, $password) {
     $user = find_user_by_email($email);
     if (!$user) return "Utilisateur non trouvé.";
-    if (isset($user['active']) && !$user['active']) return "Compte désactivé.";
-    if (!password_verify($password, $user['password'])) return "Mot de passe incorrect.";
+    if (!$user['actif']) return "Compte désactivé.";
+    if (!password_verify($password, $user['mot_de_passe'])) return "Mot de passe incorrect.";
 
     $_SESSION['user'] = [
         'id' => $user['id'],
         'email' => $user['email'],
         'role' => $user['role'],
-        'firstname' => $user['firstname'],
-        'lastname' => $user['lastname']
+        'firstname' => $user['prenom'],
+        'lastname' => $user['nom']
     ];
     return true;
 }
 
-// Vérifie si utilisateur est connecté
 function require_login() {
     if (empty($_SESSION['user'])) {
         header('Location: login.php');
@@ -79,11 +51,11 @@ function require_login() {
     }
 }
 
-// Crée un admin par défaut s'il n'existe pas
 function ensure_admin_exists() {
-    $users = load_users();
-    foreach ($users as $user) {
-        if ($user['role'] === 'admin') return;
+    global $pdo;
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM utilisateurs WHERE role = 'admin'");
+    $stmt->execute();
+    if ($stmt->fetchColumn() == 0) {
+        create_user('admin@quizzeo.local', 'Admin123!', 'admin', 'Admin', 'Quizzeo');
     }
-    create_user('admin@quizzeo.local', 'Admin123!', 'admin', 'Admin', 'Quizzeo');
 }
