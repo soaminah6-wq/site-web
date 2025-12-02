@@ -1,15 +1,8 @@
 <?php
+require_once 'src/db.php'; // Utilise ta connexion existante
 
 $message_ok = '';
 $message_erreur = '';
-
-
-try {
-    $pdo = new PDO('mysql:host=localhost;dbname=quizzeo;charset=utf8mb4', 'root', '');
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Erreur de connexion : " . $e->getMessage());
-}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nom = trim($_POST['nom'] ?? '');
@@ -36,158 +29,189 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':message' => $message,
         ]);
         if ($ok) {
-            $message_ok = "Votre message a bien été envoyé.";
+            $message_ok = "✅ Votre message a été envoyé avec succès !";
         } else {
-            $message_erreur = "Une erreur s'est produite lors de l'envoi.";
+            $message_erreur = "❌ Erreur lors de l'envoi.";
         }
     }
 }
+if ($message_ok) {
+    // Redirige vers page de succès après 2 secondes
+    echo '<script>setTimeout(function(){ 
+        window.location.href = "src/dashboard.php"; 
+    }, 2000);</script>';
+}
+
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8" />
 <title>Contact - Quizzeo</title>
 <style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
 body {
-    font-family: Arial, sans-serif;
-    background-color: #fdfdfd;
-    color: #333;
-    margin: 0;
-    padding: 0;
-}
-
-header {
-    background-color: #6e3b9e; /* violet */
-    color: white;
-    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 20px;
 }
-
-header img {
-    height: 60px;
-    margin-bottom: 10px;
-}
-
-header h1 {
-    margin: 0;
-    font-size: 2rem;
-}
-
 .main-container {
-    max-width: 600px;
-    margin: 40px auto;
-    padding: 20px;
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 10px;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    max-width: 500px;
+    width: 100%;
+    padding: 40px;
+    animation: slideUp 0.6s ease;
 }
-
+@keyframes slideUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+.logo-section {
+    text-align: center;
+    margin-bottom: 30px;
+}
+.logo-section img {
+    height: 80px;
+    border-radius: 50%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    margin-bottom: 15px;
+}
+.logo-section h1 {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 2.2em;
+    font-weight: 700;
+}
 form {
     display: flex;
     flex-direction: column;
+    gap: 20px;
 }
-
 label {
-    margin-top: 15px;
-    font-weight: bold;
-    color: #6e3b9e; /* violet */
+    font-weight: 600;
+    color: #333;
+    font-size: 0.95em;
 }
-
-input[type="text"],
-input[type="email"],
-select,
-textarea {
-    padding: 10px;
-    margin-top: 5px;
-    border: 1px solid #f28c28; /* orange */
-    border-radius: 5px;
-    font-size: 1rem;
-    background-color: #fff;
+input, select, textarea {
+    padding: 15px;
+    border: 2px solid #e1e5e9;
+    border-radius: 12px;
+    font-size: 1em;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
 }
-
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+}
 textarea {
     resize: vertical;
-    min-height: 100px;
+    min-height: 120px;
 }
-
-button {
-    margin-top: 20px;
-    padding: 12px;
-    background-color: #d13c3c; /* rouge */
+.btn-submit {
+    padding: 18px;
+    background: linear-gradient(45deg, #667eea, #764ba2);
     color: white;
     border: none;
-    border-radius: 5px;
-    font-size: 1rem;
+    border-radius: 12px;
+    font-size: 1.1em;
+    font-weight: 600;
     cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
-
-button:hover {
-    background-color: #a82e2e;
+.btn-submit:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
 }
-
-.message-ok, .message-erreur {
+.message {
     padding: 15px;
+    border-radius: 12px;
     margin-bottom: 20px;
-    border-radius: 5px;
-    font-weight: bold;
+    font-weight: 600;
     text-align: center;
+    animation: fadeIn 0.5s ease;
 }
-
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
 .message-ok {
-    background-color: #d4edda;
-    color: #f28c28;
-    border: 1px solid #c3e6cb;
+    background: linear-gradient(45deg, #d4edda, #c3e6cb);
+    color: #155724;
+    border: 2px solid #c3e6cb;
 }
-
 .message-erreur {
-    background-color: #f8d7da;
+    background: linear-gradient(45deg, #f8d7da, #f5c6cb);
     color: #721c24;
-    border: 1px solid #f5c6cb;
-}*
-
+    border: 2px solid #f5c6cb;
+}
+.footer {
+    text-align: center;
+    margin-top: 25px;
+    color: #666;
+    font-size: 0.9em;
+}
+@media (max-width: 480px) {
+    .main-container { padding: 25px; margin: 10px; }
+}
 </style>
-
-<header>
-    <img src="Capture d’écran 2025-12-01 102913.png" alt="Logo Quizzeo" />
-    <h1>Formulaire de Contact</h1>
-</header>
-
+</head>
+<body>
 <div class="main-container">
-    <!-- Message de succès ou erreur -->
+    <div class="logo-section">
+        <img src="Capture d’écran 2025-12-01 102913.png" alt="Logo Quizzeo" />
+        <h1>Nous Contacter</h1>
+    </div>
+
     <?php if ($message_ok): ?>
-        <p class="message-ok"><?= htmlspecialchars($message_ok) ?></p>
+        <div class="message message-ok"><?= htmlspecialchars($message_ok) ?></div>
     <?php endif; ?>
     <?php if ($message_erreur): ?>
-        <p class="message-erreur"><?= htmlspecialchars($message_erreur) ?></p>
+        <div class="message message-erreur"><?= htmlspecialchars($message_erreur) ?></div>
     <?php endif; ?>
 
-    <!-- Formulaire -->
     <form method="post" action="">
-        <label for="nom">Nom</label>
-        <input type="text" id="nom" name="nom" required />
+        <label for="nom">👤 Nom complet</label>
+        <input type="text" id="nom" name="nom" value="<?= htmlspecialchars($_POST['nom'] ?? '') ?>" required>
 
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" required />
+        <label for="email">📧 Email</label>
+        <input type="email" id="email" name="email" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" required>
 
-        <label for="role">Rôle</label>
+        <label for="role">🎭 Votre rôle</label>
         <select id="role" name="role" required>
-            <option value="">-- Choisissez un rôle --</option>
-            <option value="admin">Administrateur</option>
-            <option value="ecole">École</option>
-            <option value="entreprise">Entreprise</option>
-            <option value="user">Utilisateur</option>
+            <option value="">Choisissez...</option>
+            <option value="admin" <?= ($_POST['role'] ?? '') === 'admin' ? 'selected' : '' ?>>👑 Administrateur</option>
+            <option value="ecole" <?= ($_POST['role'] ?? '') === 'ecole' ? 'selected' : '' ?>>🏫 École</option>
+            <option value="entreprise" <?= ($_POST['role'] ?? '') === 'entreprise' ? 'selected' : '' ?>>🏢 Entreprise</option>
+            <option value="user" <?= ($_POST['role'] ?? '') === 'user' ? 'selected' : '' ?>>👤 Utilisateur</option>
         </select>
 
-        <label for="sujet">Sujet</label>
-        <input type="text" id="sujet" name="sujet" required />
+        <label for="sujet">📝 Sujet</label>
+        <input type="text" id="sujet" name="sujet" value="<?= htmlspecialchars($_POST['sujet'] ?? '') ?>" required>
 
-        <label for="message">Message</label>
-        <textarea id="message" name="message" required></textarea>
+        <label for="message">💬 Message</label>
+        <textarea id="message" name="message" placeholder="Dites-nous en plus..." required><?= htmlspecialchars($_POST['message'] ?? '') ?></textarea>
 
-        <button type="submit">Envoyer</button>
+        <button type="submit" class="btn-submit">🚀 Envoyer le message</button>
     </form>
-</div>
 
+    <div class="footer">
+        <p>📱 Quizzeo - Plateforme d'évaluation moderne</p>
+    </div>
+</div>
 </body>
 </html>
