@@ -1,14 +1,14 @@
 <?php
-require_once 'auth.php'; // inclut la connexion et fonctions
+require_once 'auth.php'; //  la connexion et fonctions
 
-// Si l'admin existe déjà, stop
+// Si l'admin existe déjà, ne pas le faire
 $existing = find_user_by_email('admin@quizzeo.local');
 if ($existing) {
     die("Le compte admin existe déjà.");
 }
 
 $email = 'admin@quizzeo.local';
-$password = 'Admin123!'; // mot de passe admin sécuritaire
+$password = 'Admin123!'; // mot de passe admin 
 $role = 'admin';
 $firstname = 'Admin';
 $lastname = 'Quizzeo';
@@ -20,3 +20,4 @@ if ($result === true) {
 } else {
     echo "Erreur : $result";
 }
+
