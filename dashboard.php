@@ -56,7 +56,7 @@ global $pdo;
             </div>
 
         <?php else: ?>
-            <!-- UTILISATEUR SIMPLE : ONGLETS ÉCOLE/ENTREPRISE -->
+            <!-- UTILISATEUR SIMPLE : ÉCOLE/ENTREPRISE -->
             <div class="tabs">
                 <button class="tab-btn active" onclick="showTab('ecole')" id="ecole-tab">🏫 Quiz Écoles</button>
                 <button class="tab-btn" onclick="showTab('entreprise')" id="entreprise-tab">🏢 Quiz Entreprises</button>
@@ -144,9 +144,10 @@ global $pdo;
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             // Activer onglet cliqué
             document.getElementById(type + '-tab').classList.add('active');
-            // Montrer section
+            // Montrer la section
             document.getElementById(type + '-quiz').classList.add('active');
         }
     </script>
 </body>
 </html>
+
