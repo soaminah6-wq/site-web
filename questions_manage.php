@@ -15,7 +15,7 @@ if ($id_quiz <= 0) {
     die("ID quiz invalide");
 }
 
-// Suppression
+//  Suppression
 if (isset($_GET['delete_id'])) {
     $delete_id = intval($_GET['delete_id']);
     $stmt = $pdo->prepare("DELETE FROM questions WHERE id = ? AND id_quiz = ?");
@@ -27,7 +27,7 @@ if (isset($_GET['delete_id'])) {
 $errors = [];
 $success = false;
 
-// Modification
+//  Modification
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_id'])) {
     $edit_id = intval($_POST['edit_id']);
     $question = trim($_POST['question']);
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_id'])) {
     }
 }
 
-// Ajout
+//  Ajout
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['edit_id'])) {
     $question = trim($_POST['question']);
     $reponse_1 = trim($_POST['reponse_1']);
@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['edit_id'])) {
     }
 }
 
-// Liste des questions
+//  Liste des questions
 $stmt = $pdo->prepare("SELECT * FROM questions WHERE id_quiz = ? ORDER BY id");
 $stmt->execute([$id_quiz]);
 $questions = $stmt->fetchAll();
@@ -164,3 +164,4 @@ if (isset($_GET['edit_id'])) {
 <p><a href="quiz_list.php">Retour à la liste des quiz</a></p>
 </body>
 </html>
+
