@@ -41,17 +41,18 @@ if (isset($_SESSION['user'])) {
             <input type="text" name="nom" placeholder="👤 Votre nom complet" required>
             <input type="email" name="email" placeholder="📧 Votre email" required>
             <select name="role" required>
-                <option value="">🎭 Choisissez votre rôle</option>
-                <option value="user">👤 Utilisateur</option>
-                <option value="ecole">🏫 École</option>
+                <option value=""> 🎭 Choisissez votre rôle</option>
+                <option value="user"> 👤 Utilisateur</option>
+                <option value="ecole"> 🏫 École</option>
                 <option value="entreprise">🏢 Entreprise</option>
             </select>
-            <button type="submit" class="btn-start">🚀 COMMENCER</button>
+            <button type="submit" class="btn-start"> 🚀 COMMENCER</button>
         </form>
         
         <div class="login-link">
-            <a href="src/login.php">👋 Déjà inscrit ? Se connecter</a>
+            <a href="src/login.php"> 👋 Déjà inscrit ? Se connecter</a>
         </div>
     </div>
 </body>
 </html>
+
