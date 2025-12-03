@@ -1,7 +1,7 @@
 <?php
 require_once 'auth.php';
 require_login();
-if ($_SESSION['user']['role'] !== 'admin') die('Accès admin seulement');
+if ($_SESSION['user']['role']  !== 'admin') die('Accès admin seulement');
 
 global $pdo;
 $stmt = $pdo->query("SELECT * FROM contact ORDER BY date_envoi DESC");
@@ -24,3 +24,4 @@ $messages = $stmt->fetchAll();
 <?php endforeach; ?>
 </body>
 </html>
+
