@@ -8,10 +8,10 @@ if ($_SESSION['user']['role'] !== 'admin') {
 
 global $pdo;
 
-// Gestion de l'activation/désactivation
+// Activation et Désactivation 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id'])) {
     $user_id = intval($_POST['user_id']);
-    // Récupérer l'état actuel
+    // Etat Actuel
     $stmt = $pdo->prepare("SELECT actif FROM utilisateurs WHERE id = ?");
     $stmt->execute([$user_id]);
     $user = $stmt->fetch();
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id'])) {
     exit;
 }
 
-// Récupérer tous les utilisateurs
+// Utilisateurs Enregistré
 $stmt = $pdo->query("SELECT id, email, prenom, nom, role, actif FROM utilisateurs ORDER BY id");
 $users = $stmt->fetchAll();
 
@@ -57,3 +57,4 @@ $users = $stmt->fetchAll();
 <p><a href="dashboard.php">Retour au dashboard</a></p>
 </body>
 </html>
+
