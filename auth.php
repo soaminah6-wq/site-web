@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'db.php'; // Mettre  PDO 
+require_once 'db.php'; // inclure PDO
 
 function find_user_by_email($email) {
     global $pdo;
@@ -59,4 +59,3 @@ function ensure_admin_exists() {
         create_user('admin@quizzeo.local', 'Admin123!', 'admin', 'Admin', 'Quizzeo');
     }
 }
-
