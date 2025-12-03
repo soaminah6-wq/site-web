@@ -1,5 +1,5 @@
 <?php
-require_once 'src/db.php'; // Utilise ta connexion existante
+require_once 'src/db.php'; // connexion 
 
 $message_ok = '';
 $message_erreur = '';
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 if ($message_ok) {
-    // Redirige vers page de succès après 2 secondes
+    // Redirige la page 
     echo '<script>setTimeout(function(){ 
         window.location.href = "src/dashboard.php"; 
     }, 2000);</script>';
@@ -215,3 +215,4 @@ textarea {
 </div>
 </body>
 </html>
+
