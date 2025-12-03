@@ -4,7 +4,7 @@ require_once 'auth.php';
 $errors = [];
 $success = false;
 
-// Génération d'un captcha simple (pour exemple)
+// Génération d'un captcha simple
 if (empty($_SESSION['captcha'])) {
     $_SESSION['captcha'] = [rand(1, 9), rand(1, 9)];
 }
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Regénérer captcha après tentative soumission
+    // Regénérer captcha après tentative
     $_SESSION['captcha'] = [rand(1, 9), rand(1, 9)];
 }
 
@@ -88,3 +88,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 </body>
 </html>
+
