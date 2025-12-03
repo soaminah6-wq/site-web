@@ -1,10 +1,10 @@
 <?php
 
-// public/register.php
+// enregistrement public
 
 require_once __DIR__.'/../src/auth.php';
 
-// générer captcha si non présent
+// générer captcha 
 
 if (!isset($_SESSION['captcha'])) {
 
@@ -56,4 +56,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 ?>
 <!-- HTML form ici : email, password, role (select), name, captcha display -->
+
  
