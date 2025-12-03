@@ -7,7 +7,7 @@ Participantes: BEHIFETY SYLVIA SOAMINAH, TCHAPLEU ANGE SARAH et INES OZTURK.
 
 
 
-C:\wamp64\www\quizzeo\
+ C:\wamp64\www\quizzeo\
 ├── index.php                 ← SEUL LIEN D'ENTRÉE
 ├── quiz_direct.php           ← Lien direct ?code=Q123
 ├── contact.php               ← Formulaire contact
