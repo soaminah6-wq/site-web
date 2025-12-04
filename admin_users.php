@@ -8,7 +8,7 @@ if ($_SESSION['user']['role'] !== 'admin') {
 
 global $pdo;
 
-// Gestion de l'activation/désactivation
+// Gestion de l'activation
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id'])) {
     $user_id = intval($_POST['user_id']);
     // Récupérer l'état actuel
@@ -57,3 +57,4 @@ $users = $stmt->fetchAll();
 <p><a href="dashboard.php">Retour au dashboard</a></p>
 </body>
 </html>
+
